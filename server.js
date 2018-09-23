@@ -20,10 +20,12 @@ app.get('/location', searchToLatLong);
 app.get('/weather', getWeather);
 app.get('/yelp', getYelp);
 app.get('/movies', getMovie);
+app.get('/meetups', getMeetUps);
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 //Helper Functions
+// Gets location
 function searchToLatLong(request, response) {
   Location.checkLocation({
     query: request.query.data,
@@ -45,6 +47,7 @@ function searchToLatLong(request, response) {
   })
 }
 
+// Gets weather info
 function getWeather(request, response) {
   Weather.lookUp({
     tableName: Weather.tableName,
@@ -79,7 +82,9 @@ function getWeather(request, response) {
   })
 }
 
-function getYelp (request, response) {
+
+// Gets Yelp info
+function getYelp(request, response) {
   Yelp.lookUp({
     tableName: Yelp.tableName,
 
@@ -114,7 +119,8 @@ function getYelp (request, response) {
   })
 }
 
-function getMovie (request, response) {
+// Gets movie info
+function getMovie(request, response) {
   Movie.lookUp({
     tableName: Movie.tableName,
 
@@ -148,6 +154,43 @@ function getMovie (request, response) {
   })
 }
 
+// Gets Meet Up info
+function getMeetUps(request, response) {
+  MeetUp.lookUp({
+    tableName:MeetUp.tableName,
+
+    location: request.query.data.id,
+
+    cacheHit: function(result) {
+      let ageOfResultsInDays = (Date.now() - result[0].created_at) / (1000 * 60 * 60 * 24);
+      if (ageOfResultsInDays > 1) {
+        MeetUp.deleteByLocationId(MeetUp.tableName, request.query.data.id);
+        this.cacheMiss();
+      }
+      else {
+        response.send(result);
+      }
+    },
+
+    cacheMiss: function() {
+      const url = `https://api.meetup.com/find/upcoming_events?&sign=true&photo-host=public&page=20&city=${request.query.data.search_query}&key=${process.env.MEETUP_KEY}`;
+
+      return superagent.get(url)
+        .then((result) => {
+
+          const meetUpSummaries = result.body.events.map((event) => {
+            const eventSummary = new MeetUp(event);
+            eventSummary.save(request.query.data.id);
+            return eventSummary;
+          });
+          response.send(meetUpSummaries);
+        })
+        .catch(error => handleError(error, response));
+    }
+  })
+}
+
+// Error handler function
 function handleError (error, response) {
   console.error(error);
   if(response) return response.status(500).send('Sorry something went terribly wrong.');
@@ -251,6 +294,27 @@ Movie.prototype.save = function(location_id) {
 
   client.query(SQL, values);
 }
+
+// MeetUp constructor
+function MeetUp (event) {
+  this.link = event.link;
+  this.name = event.name;
+  this.host = event.group.name;
+  this.creation_date = event.created;
+  this.created_at = Date.now();
+}
+
+MeetUp.tableName = 'meetups';
+MeetUp.lookUp = lookUp;
+MeetUp.deleteByLocationId = deleteByLocationId;
+
+MeetUp.prototype.save = function(location_id) {
+  const SQL = `INSERT INTO ${Movie.tableName} (link, name, host, creation_date, created_at, location_id) VALUES ($1, $2, $3, $4, $5, $6);`;
+  const values = [this.link, this.name, this.host, this.creation_date, this.created_at, location_id];
+
+  client.query(SQL, values);
+}
+
 
 // Generic lookUp function
 function lookUp(options) {

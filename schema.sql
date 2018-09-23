@@ -37,3 +37,12 @@ CREATE TABLE IF NOT EXISTS yelps (
   created_at BIGINT,
   location_id INTEGER NOT NULL REFERENCES locations(id)
 );
+
+CREATE TABLE IF NOT EXISTS meetups (
+id SERIAL PRIMARY KEY,
+link VARCHAR(255),
+host VARCHAR(255),
+creation_date BIGINT,
+created_at BIGINT,
+location_id INTEGER NOT NULL REFERENCES locations(id)
+);
