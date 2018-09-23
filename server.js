@@ -175,7 +175,7 @@ function getMeetUps(request, response) {
     cacheMiss: function() {
       const url = `https://api.meetup.com/find/upcoming_events?&sign=true&photo-host=public&page=20&key=${process.env.MEETUP_KEY}&lat=${request.query.data.latitude}&lon=${request.query.data.longitude}`;
 
-      return superagent.get(url)
+      superagent.get(url)
         .then((result) => {
           const meetUpSummaries = result.body.events.map((event) => {
             const eventSummary = new MeetUp(event);
@@ -308,7 +308,7 @@ MeetUp.lookUp = lookUp;
 MeetUp.deleteByLocationId = deleteByLocationId;
 
 MeetUp.prototype.save = function(location_id) {
-  const SQL = `INSERT INTO ${Movie.tableName} (link, name, host, creation_date, created_at, location_id) VALUES ($1, $2, $3, $4, $5, $6);`;
+  const SQL = `INSERT INTO ${MeetUp.tableName} (link, name, host, creation_date, created_at, location_id) VALUES ($1, $2, $3, $4, $5, $6);`;
   const values = [this.link, this.name, this.host, this.creation_date, this.created_at, location_id];
 
   client.query(SQL, values);
