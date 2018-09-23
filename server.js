@@ -190,7 +190,7 @@ function getMeetUps(request, response) {
   })
 }
 
-// Gets Trail/Hiking info
+// Gets Trail info
 function getTrails(request, response) {
   MeetUp.lookUp({
     tableName:MeetUp.tableName,
@@ -210,7 +210,7 @@ function getTrails(request, response) {
 
     cacheMiss: function() {
 
-      const url = `https://www.hikingproject.com/data/get-trails?lat=${request.query.data.latitude}&lon=${request.query.data.longitude}&maxDistance=10&key=${process.env.TRAILS_KEY}`; //had '-' after key
+      const url = `https://www.hikingproject.com/data/get-trails?lat=${request.query.data.latitude}&lon=${request.query.data.longitude}&maxDistance=10&key=${process.env.TRAILS_KEY}`;
 
       superagent.get(url)
         .then((result) => {
