@@ -173,7 +173,7 @@ function getMeetUps(request, response) {
     },
 
     cacheMiss: function() {
-      const url = `https://api.meetup.com/find/upcoming_events?&sign=true&photo-host=public&page=20&city=${request.query.data.search_query}&key=${process.env.MEETUP_KEY}`;
+      const url = `https://api.meetup.com/find/upcoming_events?&sign=true&photo-host=public&page=20&key=${process.env.MEETUP_KEY}&lat=${request.query.data.latitude}&lon=${request.query.data.longitude}`;
 
       return superagent.get(url)
         .then((result) => {
