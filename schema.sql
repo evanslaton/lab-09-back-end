@@ -50,10 +50,16 @@ location_id INTEGER NOT NULL REFERENCES locations(id)
 
 CREATE TABLE IF NOT EXISTS trails (
 id SERIAL PRIMARY KEY,
-link VARCHAR(255),
 name VARCHAR(255),
-host VARCHAR(255),
-creation_date BIGINT,
+trail_url VARCHAR(255),
+location VARCHAR(255),
+length NUMERIC(5,1),
+condition_date VARCHAR(10),
+condition_time VARCHAR(8),
+conditions VARCHAR(255),
+stars NUMERIC(2,1),
+star_votes INTEGER,
+summary VARCHAR(255),
 created_at BIGINT,
 location_id INTEGER NOT NULL REFERENCES locations(id)
 );
