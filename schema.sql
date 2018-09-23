@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS yelps (
 CREATE TABLE IF NOT EXISTS meetups (
 id SERIAL PRIMARY KEY,
 link VARCHAR(255),
+name VARCHAR(255),
 host VARCHAR(255),
 creation_date BIGINT,
 created_at BIGINT,

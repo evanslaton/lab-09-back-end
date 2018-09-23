@@ -177,7 +177,6 @@ function getMeetUps(request, response) {
 
       return superagent.get(url)
         .then((result) => {
-
           const meetUpSummaries = result.body.events.map((event) => {
             const eventSummary = new MeetUp(event);
             eventSummary.save(request.query.data.id);
