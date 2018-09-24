@@ -83,7 +83,6 @@ function getWeather(request, response) {
   })
 }
 
-
 // Gets Yelp info
 function getYelp(request, response) {
   Yelp.lookUp({
@@ -336,7 +335,7 @@ function MeetUp (event) {
   this.link = event.link;
   this.name = event.name;
   this.host = event.group.name;
-  this.creation_date = event.created;
+  this.creation_date = new Date(event.created).toString().slice(0, 15);
   this.created_at = Date.now();
 }
 
