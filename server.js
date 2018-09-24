@@ -192,15 +192,15 @@ function getMeetUps(request, response) {
 
 // Gets Trail info
 function getTrails(request, response) {
-  MeetUp.lookUp({
-    tableName:MeetUp.tableName,
+  Trail.lookUp({
+    tableName:Trail.tableName,
 
     location: request.query.data.id,
 
     cacheHit: function(result) {
       let ageOfResultsInDays = (Date.now() - result[0].created_at) / (1000 * 60 * 60 * 24);
       if (ageOfResultsInDays > 1) {
-        Trail.deleteByLocationId(MeetUp.tableName, request.query.data.id);
+        Trail.deleteByLocationId(Trail.tableName, request.query.data.id);
         this.cacheMiss();
       }
       else {
